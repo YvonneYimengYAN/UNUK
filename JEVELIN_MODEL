@@ -1,0 +1,125 @@
+# JAVELIN MODEL
+
+import numpy as np
+from scipy.integrate import odeint
+import matplotlib.pyplot as plt
+import math
+
+### Model with lift & drag force and wind and torque
+
+def ComplexJavelinWithAeroForces1(y, t, wind_speed, wind_direction):
+    x, y, theta, v_x, v_y, omega = y
+    g = 9.81  # gravity
+    air_density = 1.225  #  density of air
+    drag_coefficient = 0.47  #  coefficient of drag force
+    lift_coefficient = 0.1  #  coefficient of lift force
+    cross_sectional_area = 0.0007  # cross-sectional area
+    mass = 0.8  # mass of javelin
+    center_of_pressure_distance = 0.25  # distence between centre of mass and centre of force
+
+    # Calculate speed
+    v = np.sqrt(v_x**2 + v_y**2)
+
+    # Calculate the angle between speed of javelin and wind
+    wind_angle = math.radians(wind_direction - theta)
+
+    # Calculate the partial speed on the direction of movement
+    wind_speed_x = wind_speed * math.cos(wind_angle)
+    wind_speed_y = wind_speed * math.sin(wind_angle)
+
+    # Calculate total speed and air resistance
+    total_speed_x = v_x + wind_speed_x
+    total_speed_y = v_y + wind_speed_y
+
+    # Calculate the angular momentum
+    angular_momentum = mass * center_of_pressure_distance * v
+
+    # Calculate the angular acceleration
+    alpha = angular_momentum / (0.5 * mass * center_of_pressure_distance ** 2)
+
+    # Calculate the torque 
+    torque = 0.5 * air_density * v**2 * drag_coefficient * cross_sectional_area * center_of_pressure_distance
+
+    # Calculate the lift force
+    lift_force = 0.5 * air_density * v**2 * lift_coefficient * cross_sectional_area
+    lift_angle = np.arctan2(v_y, v_x) + np.pi / 2
+
+    # discomposition of lift force
+    lift_x = lift_force * np.cos(lift_angle)
+    lift_y = lift_force * np.sin(lift_angle)
+
+    dxdt = total_speed_x
+    dydt = total_speed_y
+    dthetadt = omega
+    dvxdt = (-total_speed_x * (air_density * drag_coefficient * cross_sectional_area * v_x) / (2 * mass) +
+             lift_x)
+    dvydt = (-g - total_speed_y * (air_density * drag_coefficient * cross_sectional_area * v_y) / (2 * mass) +
+             lift_y)
+    domegadt = (torque - alpha) / mass
+
+    return [dxdt, dydt, dthetadt, dvxdt, dvydt, domegadt]
+
+
+    def ComplexJavelinWithAeroForces1(y, t, wind_speed, wind_direction):
+    x, y, theta, v_x, v_y, omega = y
+    g = 9.81  # gravity
+    air_density = 1.225  #  density of air
+    drag_coefficient = 0.47  #  coefficient of drag force
+    lift_coefficient = 0.1  #  coefficient of lift force
+    cross_sectional_area = 0.0007  # cross-sectional area
+    mass = 0.8  # mass of javelin
+    center_of_pressure_distance = 0.25  # distence between centre of mass and centre of force
+
+    # Calculate speed
+    v = np.sqrt(v_x**2 + v_y**2)
+
+    # Calculate the angle between speed of javelin and wind
+    wind_angle = math.radians(wind_direction - theta)
+
+    # Calculate the partial speed on the direction of movement
+    wind_speed_x = wind_speed * math.cos(wind_angle)
+    wind_speed_y = wind_speed * math.sin(wind_angle)
+
+    # Calculate total speed and air resistance
+    total_speed_x = v_x + wind_speed_x
+    total_speed_y = v_y + wind_speed_y
+
+    # Calculate the angular momentum
+    angular_momentum = mass * center_of_pressure_distance * v
+
+    # Calculate the angular acceleration
+    alpha = angular_momentum / (0.5 * mass * center_of_pressure_distance ** 2)
+
+    # Calculate the torque 
+    torque = 0.5 * air_density * v**2 * drag_coefficient * cross_sectional_area * center_of_pressure_distance
+
+    # Calculate the lift force
+    lift_force = 0.5 * air_density * v**2 * lift_coefficient * cross_sectional_area
+    lift_angle = np.arctan2(v_y, v_x) + np.pi / 2
+
+    # discomposition of lift force
+    lift_x = lift_force * np.cos(lift_angle)
+    lift_y = lift_force * np.sin(lift_angle)
+
+    dxdt = total_speed_x
+    dydt = total_speed_y
+    dthetadt = omega
+    dvxdt = (-total_speed_x * (air_density * drag_coefficient * cross_sectional_area * v_x) / (2 * mass) +
+             lift_x)
+    dvydt = (-g - total_speed_y * (air_density * drag_coefficient * cross_sectional_area * v_y) / (2 * mass) +
+             lift_y)
+    domegadt = (torque - alpha) / mass
+
+    return [dxdt, dydt, dthetadt, dvxdt, dvydt, domegadt]
+
+
+
+plt.figure(figsize=(15, 3))
+plt.plot(x_data_senior_Head, y_data_senior_Head, label="Trajectory with Headwind")
+plt.xlabel("Horizontal (m)")
+plt.ylabel("Vertical (m)")
+plt.title("Movement of Javelin")
+plt.legend()
+plt.grid()
+plt.show()
+
